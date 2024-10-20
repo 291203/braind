@@ -5,11 +5,14 @@ class statia{
         $this->text = $this->getTextFromUrl($url);
     }
     private function getTextFromUrl($url){
-        $content = @file_get_contents($url);
-        if($content !== false){
-        $text = strip_tags($content);
-        return trim($text);
+        if (filter_var($url,FILTER_VALIDATE_URL)){
+            $content = @file_get_contents($url);
+            if($content !== false){
+                $text = strip_tags($content);
+                return trim($text);
+            } 
         }
+        return "error";
     }
    
     public function predlozh(){
@@ -22,12 +25,12 @@ class statia{
         $w = preg_split('/\s+/',trim($this->predlozh()));
         $c = count($w);
         $lw = array_slice($w,-3);
-        $linc = '<a href="http://localhost:3000/statia.phphttp://statia.com">'. implode( ' ',$lw) . '<a>';
+        $linc = '<a href="http://localhost:3000/statia.php">'. implode( ' ',$lw) . '<a>';
         $qwe = implode(' ',array_slice($w,0,-3));
         return $qwe . ' ' . $linc . ' ...';
     }
 }
-$url = "http://localhost:3000/statia.phphttp://statia.com";
+$url = "http://localhost:3000/statia.php";
 $Statia = new statia($url);
 $fgh = $Statia->ssilka();
 echo $fgh;
