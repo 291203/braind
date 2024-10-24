@@ -5,44 +5,53 @@ class Statia {
 
     public function __construct($url) { 
         $this->url = $url; 
-        $this->text = $this->getTextFromUrl($url); 
+        $this->text = $this->getTextFromFile($url); 
     } 
 
-    private function getTextFromUrl($url) { 
-        if (filter_var($url, FILTER_VALIDATE_URL)) { 
-            $content = file_get_contents($url); 
+    private function getTextFromFile($filePath) { 
+        if (file_exists($filePath)) { 
+            $content = file_get_contents($filePath); 
             if ($content !== false) { 
                 $text = strip_tags($content); 
                 return trim($text); 
-            } 
+            } else {
+                return "error";
+            }
         } 
         return "error"; 
     } 
 
     public function genAnons() { 
-        $anons = substr($this->text, 0, 250); 
-        $words = explode(' ', $anons); 
+        if ($this->text === "error" || $this->text === "error") {
+            return $this->text;
+        }
 
-        if (count($words) < 3) {
+        $anons = substr($this->text, 0, 250); 
+        $w = explode(' ', $anons); 
+
+        if (count($w) < 3) {
             return $anons . '...';
         }
 
-        $lastThreeWords = array_slice($words, -3); 
-        $linkText = implode(' ', $lastThreeWords); 
+        $ltw = array_slice($w, -3); 
+        $linkText = implode(' ', $ltw);     
         $link = '<a href="' . $this->url . '">' . $linkText . '</a>'; 
 
-        $words[count($words) - 3] = $link; 
-        $words = array_slice($words, 0, -2); 
+        $w[count($w) - 3] = $link; 
+        $w = array_slice($w, 0, -2); 
 
-        $anons = implode(' ', $words) . '...'; 
+        $anons = implode(' ', $w) . '...'; 
         return $anons; 
     } 
 } 
 
-$url = "C:\Users\NIKRO\OneDrive\Документы\GitHub\braind\statia.html"; 
-$Statia = new Statia($url); 
-$fgh = $Statia->genAnons(); 
-echo $fgh; 
+$articleFiles = ["statia1.html", "statia2.html"];
+
+foreach ($articleFiles as $filePath) {
+    $Statia = new Statia($filePath); 
+    $fgh = $Statia->genAnons(); 
+    echo "<p>$fgh</p>";
+}
 ?> 
 <html> 
 </html>
